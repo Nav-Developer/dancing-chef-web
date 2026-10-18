@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import {
   AppBar,
   Toolbar,
@@ -17,72 +18,114 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
+import StarIcon from "@mui/icons-material/Star";
 import assets from "@/assets";
 
 const LOGO_SRC = assets.images.logo;
 
 const links = [
+  { label: "Home", href: "/" },
   { label: "Menu", href: "/menu" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
 ];
 
+function Logo({ size }: { size: number }) {
+  return (
+    <Box
+      sx={{
+        position: "relative",
+        width: size,
+        height: size,
+        borderRadius: "50%",
+        overflow: "hidden",
+        border: "3px solid",
+        borderColor: "secondary.main",
+        bgcolor: "#fff",
+        flexShrink: 0,
+      }}
+    >
+      <Image
+        src={LOGO_SRC}
+        alt="Dancing Chef"
+        fill
+        priority
+        sizes="80px"
+        style={{
+          objectFit: "cover",
+          transform: "scale(1)",
+          transformOrigin: "52% 30%",
+        }}
+      />
+    </Box>
+  );
+}
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <>
       <AppBar
         position="fixed"
-        color="transparent"
         elevation={0}
         sx={{
-          backdropFilter: "blur(10px)",
-          bgcolor: "transparent",
+          bgcolor: "primary.dark",
+          color: "#fff",
+          borderBottom: "2px solid",
+          borderColor: "secondary.main",
         }}
       >
         <Toolbar
           sx={{
-            justifyContent: "space-between",
-            alignItems: "center",
-            minHeight: { xs: 72, sm: 88 },
+            minHeight: { xs: 72, md: 96 },
+            justifyContent: { xs: "space-between", md: "center" },
+            gap: { md: 5 },
           }}
         >
-          <Link href="/" style={{ display: "flex", alignItems: "center" }}>
-            <Image
-              src={LOGO_SRC}
-              alt="Dancing Chef"
-              width={120}
-              height={40}
-              priority
-              style={{
-                height: "auto",
-                width: "auto",
-                maxHeight: 56,
-                borderRadius: "50px",
-              }}
-            />
+          <Link href="/" style={{ display: "flex" }}>
+            <Logo size={64} />
           </Link>
 
           {/* Desktop */}
           <Box
             sx={{
-              display: { xs: "none", sm: "flex" },
+              display: { xs: "none", md: "flex" },
               alignItems: "center",
-              gap: 1,
+              gap: 3,
             }}
           >
-            {links.map((l) => (
-              <Button
-                key={l.href}
-                component={Link}
-                href={l.href}
-                color="inherit"
-              >
-                {l.label}
-              </Button>
-            ))}
-            <Button component={Link} href="/reservation" variant="contained">
+            {links.map((l) => {
+              const active = pathname === l.href;
+              return (
+                <Button
+                  key={l.href}
+                  component={Link}
+                  href={l.href}
+                  disableRipple
+                  //   startIcon={<StarIcon sx={{ fontSize: "14px !important" }} />}
+                  sx={{
+                    color: active ? "secondary.main" : "#fff",
+                    fontSize: "0.8rem",
+                    letterSpacing: "0.18em",
+                    "& .MuiButton-startIcon": { color: "secondary.main" },
+                    "&:hover": {
+                      bgcolor: "transparent",
+                      color: "secondary.main",
+                    },
+                  }}
+                >
+                  {l.label}
+                </Button>
+              );
+            })}
+            <Button
+              component={Link}
+              href="/reservation"
+              variant="contained"
+              color="secondary"
+            >
               Reserve
             </Button>
           </Box>
@@ -92,7 +135,7 @@ export default function Navbar() {
             color="inherit"
             aria-label="open menu"
             onClick={() => setOpen(true)}
-            sx={{ display: { xs: "inline-flex", sm: "none" } }}
+            sx={{ display: { xs: "inline-flex", md: "none" } }}
           >
             <MenuIcon />
           </IconButton>
@@ -106,16 +149,16 @@ export default function Navbar() {
         slotProps={{
           paper: {
             sx: {
-              width: "60vw",
-              maxWidth: 380,
-              bgcolor: "#0f0d0c",
+              width: "80vw",
+              maxWidth: 360,
+              bgcolor: "primary.dark",
+              color: "#fff",
               display: "flex",
               flexDirection: "column",
             },
           },
         }}
       >
-        {/* Header */}
         <Box
           sx={{
             display: "flex",
@@ -128,32 +171,20 @@ export default function Navbar() {
           <Link
             href="/"
             onClick={() => setOpen(false)}
-            style={{ display: "flex", alignItems: "center" }}
+            style={{ display: "flex" }}
           >
-            <Image
-              src={LOGO_SRC}
-              alt="Dancing Chef"
-              width={120}
-              height={40}
-              style={{
-                height: "auto",
-                width: "auto",
-                maxHeight: 48,
-                borderRadius: "50px",
-              }}
-            />
+            <Logo size={52} />
           </Link>
           <IconButton
             aria-label="close menu"
             onClick={() => setOpen(false)}
-            sx={{ bgcolor: "rgba(255,255,255,0.08)" }}
+            sx={{ color: "#fff", bgcolor: "rgba(255,255,255,0.1)" }}
           >
             <CloseIcon />
           </IconButton>
         </Box>
-        <Divider />
+        <Divider sx={{ borderColor: "rgba(247,209,84,0.4)" }} />
 
-        {/* Links */}
         <List sx={{ px: 2, py: 0 }}>
           {links.map((l) => (
             <Box key={l.href}>
@@ -165,20 +196,30 @@ export default function Navbar() {
               >
                 <ListItemText
                   primary={l.label}
-                  slotProps={{ primary: { sx: { fontWeight: 700 } } }}
+                  slotProps={{
+                    primary: {
+                      sx: {
+                        fontWeight: 700,
+                        letterSpacing: "0.15em",
+                        textTransform: "uppercase",
+                        fontSize: "0.85rem",
+                        color: pathname === l.href ? "secondary.main" : "#fff",
+                      },
+                    },
+                  }}
                 />
               </ListItemButton>
-              <Divider />
+              <Divider sx={{ borderColor: "rgba(255,255,255,0.12)" }} />
             </Box>
           ))}
         </List>
 
-        {/* Bottom actions */}
         <Box sx={{ px: 2, mt: 3 }}>
           <Button
             component={Link}
             href="/reservation"
             variant="contained"
+            color="secondary"
             fullWidth
             size="large"
             onClick={() => setOpen(false)}

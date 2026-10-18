@@ -2,9 +2,19 @@ import { Box, Typography } from "@mui/material";
 
 export default function Footer() {
   return (
-    <Box component="footer" sx={{ py: 4, textAlign: "center", opacity: 0.6 }}>
-      <Typography variant="body2">
-        © {new Date().getFullYear()} Dancing Chef. All rights reserved.
+    <Box
+      component="footer"
+      sx={{
+        bgcolor: "#1a0f0d",
+        color: "#f5e1c0",
+        py: 4,
+        textAlign: "center",
+        borderTop: "3px solid",
+        borderColor: "secondary.main",
+      }}
+    >
+      <Typography variant="body2" sx={{ letterSpacing: "0.1em" }}>
+        © {new Date().getFullYear()} DANCING CHEF. ALL RIGHTS RESERVED.
       </Typography>
     </Box>
   );
